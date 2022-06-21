@@ -1,0 +1,8 @@
+min_temp: 300
+max_temp: 3000
+
+# Default is 3 simulations, but this can be changed for higher
+# resolution
+N: 3
+
+plot_dir: plots

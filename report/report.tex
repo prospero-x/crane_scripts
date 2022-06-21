@@ -1,0 +1,315 @@
+\documentclass[twocolumn,10pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[english]{babel}
+\usepackage{calrsfs}
+\usepackage{chngcntr}
+\usepackage{comment}
+\usepackage{dsfont}
+\usepackage{esint}
+\usepackage{fancyhdr}
+\usepackage[T1]{fontenc}
+\usepackage{gensymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{lipsum}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage[linewidth=1pt]{mdframed}
+\usepackage{multicol}
+\usepackage[section]{placeins}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{external}
+\usepackage{physics}
+\usepackage{subcaption}
+\usepackage{tcolorbox}
+\usepackage{upgreek}
+\usepackage{wrapfig}
+\usepackage{yfonts}
+
+%
+%
+% Page margins
+%
+%
+\geometry{
+    margin = 1cm,
+    top = 1in,
+    bottom = 1in,
+}
+
+%
+%
+% Fancy headers and footers
+%
+%
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,LO]{NPRE 598 Module 3: Fluid Models}
+\fancyhead[RE,RO]{Instructors: Davide Curreli, Shane Keniley}
+\fancyfoot[LE,LO]{Module 3: Fluid Models}
+\fancyfoot[CE,CO]{\thepage}
+
+
+
+
+% Equations take the same number as the section they're in
+\counterwithin{equation}{section}
+
+\title{
+        CO2 Splitting in a Microwave Plasma
+}
+\author{Mikhail Rezazadeh}% Instructors: Davide Curreli, Shane Keniley}
+\date{}
+\begin{document}
+\twocolumn [
+        \begin{@twocolumnfalse}
+        \maketitle
+
+        \begin{abstract}
+                As atmospheric CO$_2$ becomes an increasing problem, several
+                methods for CO$_2$ mitigation have been suggested. Recently,
+                the use of plasma technology to split CO$_2$ has gained
+                attention within the scientific community. An important step
+                for demonstrating the feasibility of plasma technology is
+                maximizing the efficiency of the splitting process. This paper
+                examines the effects of gas temperature on the splitting of
+                CO$_2$ in a Microwave Plasma.
+        \end{abstract}
+\vspace{1cm}
+\end{@twocolumnfalse}
+]
+
+
+%
+%
+% Introduction
+%
+%
+\section{Introduction}
+As the concentration of CO$_2$, which is a greenhouse gas, increases in Earth's atmosphere,
+several methods for mitigation have been proposed. One method gaining attention is the
+splitting of CO$_2$ in a supersonic flow in a microwave plasma discharge. Recently, the efficiency
+has reached as high as 90\% for such systems. In order to better understand these complex systems,
+computer simulation is needed. In this paper, I show the effects of altering one parameter, gas
+temperature, on the percent dissociation of CO$_2$ in a Microwave plasma of constant electon
+temperature of 2eV.
+
+
+\section{Model Description}
+
+\subsection{Plasma Conditions}
+For this model, a constant electron temperature of 2eV was used.  The mean
+electron energy is calculated using the formula $\langle E \rangle = 3/2 k_BT$. The pressure
+remained constant at 100 mBar. For electron
+impact reactions, cross sections were obtained from LxCat, specifically the Phelps
+and Itikawa databases.
+
+\subsection{Bolsig+}
+Electron impact reaction rates were calculated using Bolsig+.
+For the Bolsig input conditions, the plasma density was required.
+This was estimated as a function of gas temperature by examining Figure 4 in
+[1] (sub plot (d), with power deposition equal to Pmax*5 and pressure of 100
+mBar). For example, at a temperature of 300K, a plasma density of $2 \cross 10^{14}$
+m$^{-3}$ was used, and for a temperature of 3000K, the plasma density was estimated to be
+$10 \cross 10^{17}$  m$^{-3}$. Since vibrational temperature in Figure 4 roughly
+approximated the gas temperature, the gas temperature was used as the Excitation
+Temperature in the Bolsig+ configuration.
+
+\subsection{Crane Configuration}
+After electron impact reaction rates were calculated using Bolsig+, CRANE
+(developed by the Laboratory for Computational Plasma Physics at UIUC) was used
+to solve the 0-Dimensional reaction network problem. Crane was configured with a starting
+CO2 density by using the Ideal Gas Law for CO2 at 100 mBar. The initial electron
+density was set using the same process as above, namely referring to Figure 4
+of [1].
+
+
+\subsection{Reduction of Reaction Network}
+The reaction network in the supplementary information of (Boegaerts and Bethelot 2017))
+was used to simulate
+a surfatron microwave steady-state discharge of a CO$_2$ plasma. To reduce the reaction,
+the well-known Quasi Steady State Assumption (QSSA) was
+applied, distinguishing between so-called fast and slow reactions. A threshold
+reaction rate of $1 \cross 10^{-16}$ (m$^{3}$/s or m$^{6}$/s) was chosen, and
+every reaction with a constant reaction rate (i.e., independent of EEDF,
+electron temperature, and gas temperature) less than this was removed from
+the reaction network.
+
+Next, reaction rates with non-constant rates were examined and eliminated on
+a case-by-case basis. For example, the reaction:
+\begin{align*}
+        \text{CO} + \text{O}^+ &\longrightarrow \text{CO}^+ + \text{O}\\
+        \text{Rate:   }& 4.9 \cross 10^{-18}\sqrt{\frac{T_g}{300K}}
+            \text{exp}\left(\frac{-4580K}{T_g}\right)
+\end{align*}
+were $T_g$ is gas temperature in Kelvin, will be eliminated because the maximim
+rate, which occurs at 3000K, is 3.07$\cross 10^{-18}$ m$^3$/s, which is below the
+threshold. However, the following reaction:
+\begin{align*}
+        \text{O}_2^-   + \text{M} &\longrightarrow \text{O}_2 + \text{M} + \text{e}\\
+        \text{Rate:   }& 2.7 \cross 10^{-16}\sqrt{\frac{T_g}{300K}}
+            \text{exp}\left(\frac{-5590K}{T_g}\right)
+\end{align*}
+has a maximum rate at 3000K of 1.32 $\cross 10^{-16}$ m$^{3}$/s, which is
+above the threshold. Therefore, it is included in the final reaction network.
+
+Finally, the electron impact reactions which neither consumed nor produced CO$_2$
+were removed from the reaction network, leaving a total of 11 reactions, as shown
+below:
+
+\begin{figure}[!htb]
+\begin{center}
+\resizebox{8cm}{!}{
+ \begin{tabular}{|| c | l ||}
+ \hline
+         \textbf{Name} & \textbf{Electron Impact Reaction} \\
+         [0.5ex]
+\hline\hline
+         X1 &e + CO$_2$ $\longrightarrow$ e + e + CO$_2^+$\\
+         X2 &e + CO$_2$ $\longrightarrow$ e + e + CO + O$^+$\\
+         X3 &e + CO$_2$ $\longrightarrow$ e + e + O + CO$^+$\\
+         X4& e + CO$_2$ $\longrightarrow$ e + e + O$_2$ + C$^+$\\
+         X5&e + CO$_2$ $\longrightarrow$ CO + O$^-$ \\
+         X6&e + CO$_2$ $\longrightarrow$ CO + O + e \\
+         X7&e + CO$_2$ $\longrightarrow$ e + CO$_2$* (10.5 eV) \\
+         X8&e + CO$_2$ $\longrightarrow$ e + CO$_2$v$_1$ (0.083 eV) \\
+         X9&e + CO$_2$ $\longrightarrow$ e + CO$_2$v$_2$ (0.167 eV) \\
+         X10&e + CO$_2$ $\longrightarrow$ e + CO$_2$v$_3$ (0.252 eV) \\
+         X11&e + CO$_2$ $\longrightarrow$ e + CO$_2$v$_4$ (0.339 eV) \\
+\hline
+\end{tabular}}\\
+\caption{Electron Impact reactions used in reaction network. Only reactions
+        involving CO$_2$ were used.}
+\end{center}
+\end{figure}
+
+The reason for using only reactions involving CO$_2$ is that we wish to examine
+the dissociation of CO$_2$ reactions. While other reactions might consume
+or produce species which are involved in other CO$_2$ production or dissociation
+reactions, we assume here that the first-order approximation involves only
+CO$_2$ electron impact reactions. Note that X2, X3, and X4 were not available
+on LxCat, but were taken from Itikawa 2002 ([4])
+
+\section{Production Runs}
+Crane was used to solve systems of the above reaction model for 50 temperatures,
+equally spaced between 300K and 3000K. For reactions involving heavy neutrals "M", M was calculated at
+each timestep as the sum of the densities of all neutral species in the plasma. The time variable was set from $t=0$ to 1 millisecond.
+The MOOSE standard library \textbf{IterationAdaptiveDT} was
+used, which dynamically scaled the time step up and down based
+on the number of steps taken to converge to the previous step.
+
+\section{Numerical Convergence}
+All timesteps for all Crane simulations converged within 1
+iteration (both Linear and Nonlinear Solves). An example,
+the Steady-State Relative Differential Norms for the 2700K run
+are shown in Figures~\ref{fig: co2norms} and \ref{fig: ssnorms}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width = 8cm]{plots/co2_residual_norms.png}
+\caption{CO$_2$ residual norms for 2700K simulation.}
+\label{fig: co2norms}
+\end{figure}
+
+
+\begin{figure}[htbp]
+\centering
+        \includegraphics[width = 8cm]{plots/steady_state_norms.png}
+       \caption{Steady-State Relative Differential Norms for 2700 K simulation.}
+        \label{fig: ssnorms}
+\end{figure}
+
+For each timestep, the linear and nonilnear convergence took 1 iteration, meaning that the IterativeAdaptive
+time step increased exponentially for the entire simlation. While the residual norm for CO$_2$ is high,
+it is on the same order of the CO$_2$ volumetric density.
+
+\section{Results}
+The results of the temperature-parametrized simulations are shown in Figure \ref{fig: pct}. Percent
+conversion is defined by:
+\begin{align*}
+        \%\text{ converted} = \frac{
+            n(\text{CO}_2)_\text{start} - n(\text{CO}_2)_\text{end}
+        }
+        {
+            n(\text{CO}_2)_\text{start}
+        }
+\end{align*}
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=8cm]{plots/pct_converted.png}
+\caption{Percent CO$_2$ Converted in 1 millisecond of Plasma Simulation}
+\label{fig: pct}
+\end{center}
+\end{figure}
+
+\section{Discussion}
+\subsection{Temperature Dependence of CO2 Conversion}
+The results in Figure~\ref{fig: pct} demonstrate a much greater conversion rate of CO$_2$ at higher
+gas temperatures. This can be explained by what Boegaerts and Berthelot (2017) refer to as the main CO$_2$ dissociation reactions:
+\begin{align*}
+        \text{Electron Impact Dissociation} &\text{  (X7)}\\
+        \text{CO}_2 + \text{M} \longrightarrow \text{CO} + \text{O} + \text{M} &\text{  (N1)}\\
+        \text{CO}_2 + \text{O} \longrightarrow \text{CO} + \text{O}_2   &\text{  (N2) }\\
+\end{align*}
+At low temperatures (300K) the rates of N1 and N2 are highly power-dependent.
+As gas temperature increases, N1 and N2 become increasingly constant across all powers.
+X1, on the other hand, increases linearly with power deposition regardless of the gas temperature.
+This can be explained from the fact that electron density increases with power deposition, while
+the electron temperature remains constant. Thus, the rate coefficient remains constant but the
+electron-impact dissociation rate increases linearly.
+
+\subsection{Network Reduction}
+In the QSSA approach, slow reactions are eliminated from the chemical reaction network (CRN). Electron-
+impact reactions are typically the fast reactions in a system, and so in the context of investigating
+CO$_2$ splitting, it would be best to leave intact more electron-impact reactions.
+
+To illustrate this point, note that Boegaerts \& Bethelot (2017) identify N1 and N2 (see section 6.1) as the main CO$_2$
+dissociation reactions, while the following:
+\begin{align*}
+    \text{CO} + \text{O} + \text{M} \longrightarrow \text{CO}_2 + \text{M} & \text{   (N3)}\\
+    \text{O}_2 + \text{CO} \longrightarrow \text{CO}_2 + \text{O} & \text{   (N4)}
+\end{align*}
+are the main recombination reactions. Thus, an even better method for network reduction would be to
+leave in place all electron-impact reactions which either produce or consume the reactants of the 2 main
+dissociation reactions (N1 and N2) and the two main recombination reactions (N3 and N4). Since neutral heavy
+species \textit{M} is a reactant in these reactions, that means we must include every electron-impact reaction
+which either removes a heavy neutral from the plasma or produces a new heavy neutral. Howver, that would
+leave intact every single electron-impact
+reaction. In the spirit of network-reduction, it did not seem appropriate to copy the entire
+network of electron impact reactions.
+
+Other work ([2]) focuses on lumping together vibrational levels of CO$_2$, while [3] does a PCA analysis
+to reduce the network down to two principle components. There are other interesting network reduction
+techniques, such as the one in [5] which makes use Geometric Singular Perturbation Theory to obtain
+an analytic method for network reduction. However, the examples in the paper involve only a few reactions,
+and applying such a method to the full network for CO$_2$ microwave plasma would be a considerable
+undertaking.
+
+\section{Conclusion}
+In this project, I used Crane to solve a 0-dimentional plasma problem simulating a Microwave discharge
+of a CO$_2$ plasma in a surfatron. Electron-impact reaction rates were computed for each gas temperature
+using Bolsig+, with cross sections coming from LxCat or directly from [4]. The results show that gas
+temperature greatly improves the rate of CO$_2$ dissociation, especially for gas temperatures above 2500K.
+If microwave plasmas are to be applied at a large scale to mitigate atmospheric CO$_2$, the power required
+to achieve such high gas temperatures must be considered, as power efficiency is a critical metric of the
+industrial splitting process.
+
+\section{Acknowledgements}
+Special thanks for Professor Davide Curreli for his guidance and instruction on Chemical networks and Plasma
+reduction. In addition, this project would not have been possible without the help of Shane Keniley.
+
+\section{References}
+[1] Berthelot, A., \&amp; Bogaerts, A. (2017). Modeling of CO2 Splitting in a Microwave Plasma: How to Improve the Conversion and Energy Efficiency. Journal of Physical Chemistry C, 121.\\
+\newline
+[2] Berthelot, A., \&amp; Bogaerts, A. (2016). Modeling of plasma-based conversion : Lumping of the vibrational levelsAn. Plasma Sources Science and Technology, 25, 4th ser.\\
+\newline
+[3] Peerenboom, K., Parente, A., Kozák, T., Bogaerts, A., \&amp; Degrez, G. (2015). Dimension reduction of non-equilibrium plasma kinetic models using principal component analysis. Plasma Sources Science and Technology.\\
+\newline
+[4] Itikawa, Y. (2002). Cross Sections for Electron Collisions With Carbon Dioxide. Journal of Physical and Chemical Reference Data, 31.\\
+\newline
+[5] Feliu, E., Kruff, N., \&amp; Walcher, S. (2020). Tikhonov–Fenichel Reduction for Parameterized Critical Manifolds with Applications to Chemical Reaction Networks. Journal of Nonlinear Science, 30.
+% Ref 6 https://arxiv.org/pdf/1905.08306.pdf
+\end{document}
