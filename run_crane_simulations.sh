@@ -6,7 +6,7 @@ source ./logging.sh
 ###
 ### CHANGE THIS
 ###
-CRANE_BIN=../../../crane-opt
+CRANE_BIN=$HOME/projects/crane/crane-opt
 ###
 ###
 ###
