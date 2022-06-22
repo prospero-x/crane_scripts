@@ -1,7 +1,7 @@
 
 ## Requirements
 1. [Crane](https://github.com/lcpp-org/crane) 
-2. [bolsigminus](http://www.bolsig.laplace.univ-tlse.fr/download.html)
+2. [bolsigminus](http://www.bolsig.laplace.univ-tlse.fr/download.html)**NOTE** the latest version tested was `03/2016`.
 
 ## Setup
 `pip install -r requirements.txt`
