@@ -50,7 +50,9 @@ if __name__ == '__main__':
             }
         )
 
-        with open(dirname + '/co2_splitting.i', 'w') as f:
+        crane_input_fname = f'{dirname}/co2_splitting.i'
+        with open(crane_input_fname, 'w') as f:
             f.write(crane_input_file)
+        print(f'wrote CRANE input file {crane_input_fname}')
 
 

@@ -11,7 +11,7 @@ for CRANE to reference
 
 # Bolsig+ understands the addition of an electron as an ionization, which
 # means multiple reactions are listed under IONIZATION in the output. To
-# ditsinguish Ionization reactions, I set the threshold energy to be slightly
+# distinguish Ionization reactions, I set the threshold energy to be slightly
 # different for each one, and this dictionary is used to identify and name each
 # reaction in the Bolsig+ output.
 _REACTION_NAMES = {
@@ -68,6 +68,11 @@ def parse_output_file(directory):
                 columns = line.split('\t')
 
             if re.match('C\d+', columns[0]):
+                if 'Effective (momentum)' in line:
+                    # Ignore electron effective momentum data
+                    line = f.readline()
+                    continue
+
                 reaction_name = get_reaction_name(line)
                 if reaction_name is None:
                     print('Warning: failed to find reaction name matching line "%s"' % line)
@@ -87,6 +92,7 @@ def parse_output_file(directory):
             elif reaction_file is not None:
                 if line == '':
                     # Reached the end of this data set
+                    print(f'wrote reaction rate file {reaction_file_name}')
                     reaction_file.close()
                     reaction_file = None
                 elif line != 'Energy (eV)	Rate coefficient (m3/s)' and columns[0] != prev_x:

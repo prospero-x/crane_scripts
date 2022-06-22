@@ -1,5 +1,8 @@
 import yaml
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import animation, cm, colors
+import sys
 
 CONFIG_FILE = 'config.yaml'
 
@@ -109,3 +112,147 @@ def plasma_density(Tgas):
 
 
     return linearly_interpolate(Tgas, _electron_densities)
+
+
+BASH_RED='\033[1;31m'
+BASH_LIGHT_RED='\033[0;31m'
+BASH_YELLOW='\033[0;33m'
+BASH_GREEN='\033[0;32m'
+BASH_BLUE='\033[0;34m'
+BASH_LIGHT_BLUE='\033[2;36m'
+BASH_GREY='\033[0;37m'
+BASH_NOCOLOR='\033[0m'
+
+def print_red(m=''):
+    print(f'{BASH_RED}{m}{BASH_NOCOLOR}')
+
+def print_green(m=''):
+    print(f'{BASH_GREEN}{m}{BASH_NOCOLOR}')
+
+def print_yellow(m=''):
+    print(f'{BASH_YELLOW}{m}{BASH_NOCOLOR}')
+
+
+class PrettyPlot:
+
+
+    def __init__(self, ax, linewidth, markersize):
+        self.ax = ax
+        self.linewidth = linewidth
+        self.markersize = markersize
+
+    def set_kwargs(self, kwargs):
+        kwargs['linewidth'] = kwargs.get('linewidth', self.linewidth)
+        kwargs['markersize'] = kwargs.get('markersize', self.markersize)
+
+
+    def plot(self, *args, **kwargs):
+        self.set_kwargs(kwargs)
+        self.ax.plot(*args, **kwargs)
+
+    def semilogy(self, *args, **kwargs):
+        self.set_kwargs(kwargs)
+        self.ax.semilogy(*args, **kwargs)
+
+    def semilogx(self, *args, **kwargs):
+        self.set_kwargs(kwargs)
+        self.ax.semilogx(*args, **kwargs)
+
+    def loglog(self, *args, **kwargs):
+        self.set_kwargs(kwargs)
+        self.ax.loglog(*args, **kwargs)
+
+
+def new_pretty_plot(xlabel = '', ylabel = '', title = '',
+                fontsize = 24,
+                figsize = (14, 12),
+                linewidth = 3,
+                markersize = 20):
+
+    fig = plt.figure(figsize = figsize)
+    ax = plt.axes()
+    ax.tick_params(axis = 'both', which = 'major', labelsize = fontsize)
+    ax.tick_params(axis = 'both', which = 'minor', labelsize = fontsize)
+    ax.yaxis.offsetText.set_fontsize(fontsize)
+    ax.xaxis.offsetText.set_fontsize(fontsize)
+
+    ax.set_ylabel(ylabel, fontsize = fontsize)
+    ax.set_xlabel(xlabel, fontsize = fontsize)
+    ax.set_title(title, fontsize = fontsize)
+    return PrettyPlot(ax, linewidth, markersize)
+
+
+def new_panel_plot(nrows, ncols,
+                xlabels = None, ylabels = None, titles = None,
+                fontsize = 24,
+                linewidth = 3,
+                markersize = 20):
+
+    if nrows == 1:
+        figsize = (24, 10)
+    elif nrows == 2:
+        figsize = (24, 20)
+
+    _, axs = plt.subplots(nrows, ncols, figsize = figsize)
+
+
+    xlabels = xlabels or ['']*nrows*ncols
+    ylabels = ylabels or ['']*nrows*ncols
+    titles = titles or ['']*nrows*ncols
+
+    if nrows > 1:
+        for i in range(nrows):
+            for j in range(ncols):
+                axs[i][j].tick_params(
+                    axis = 'both', which = 'major', labelsize = fontsize)
+                axs[i][j].tick_params(
+                    axis = 'both', which = 'minor', labelsize = fontsize)
+                axs[i][j].xaxis.offsetText.set_fontsize(fontsize)
+                axs[i][j].yaxis.offsetText.set_fontsize(fontsize)
+
+                input_idx = i*(ncols-1) + j
+                axs[i][j].set_xlabel(xlabels[input_idx], fontsize = fontsize)
+                axs[i][j].set_ylabel(ylabels[input_idx], fontsize = fontsize)
+                axs[i][j].set_title(titles[input_idx], fontsize = fontsize)
+
+                axs[i][j] = PrettyPlot(axs[i][j])
+    else:
+        for j in range(ncols):
+            axs[j].tick_params(
+                axis = 'both', which = 'major', labelsize = fontsize)
+            axs[j].tick_params(
+                axis = 'both', which = 'minor', labelsize = fontsize)
+            axs[j].xaxis.offsetText.set_fontsize(fontsize)
+            axs[j].yaxis.offsetText.set_fontsize(fontsize)
+            axs[j].set_xlabel(xlabels[j], fontsize = fontsize)
+            axs[j].set_ylabel(ylabels[j], fontsize = fontsize)
+            axs[j].set_title(titles[j], fontsize = fontsize)
+            axs[j] = PrettyPlot(axs[j], linewidth, markersize)
+
+    return axs
+
+
+
+
+def add_legend(ax, fontsize = 24):
+    ax.legend(prop = dict(size=fontsize))
+
+def add_legends(axs, nrows, ncols, fontsize = 24):
+    for i in range(nrows):
+        for j in range(ncols):
+            if nrows > 1:
+                axs[i][j].legend(prop = dict(size = fontsize))
+            else:
+                axs[j].legend(prop = dict(size = fontsize))
+
+
+def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
+    new_cmap = colors.LinearSegmentedColormap.from_list(
+        'trunc({n},{a:.2f},{b:.2f})'.format(n=cmap.name, a=minval, b=maxval),
+        cmap(np.linspace(minval, maxval, n)))
+    return new_cmap
+
+
+def plt_show(ax):
+    add_legend(ax)
+    plt.show()

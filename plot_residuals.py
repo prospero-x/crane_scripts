@@ -2,6 +2,8 @@ import sys
 import re
 import numpy as np
 import matplotlib.pyplot as plt
+import util
+import os
 
 
 def get_norms(filename):
@@ -32,24 +34,28 @@ def get_norms(filename):
 
 def plot_norms(time_steps, co2_norms, steady_state_norms, plot_dir):
 
-    plt.figure(1)
-    plt.semilogy(time_steps, steady_state_norms, 'g.-')
-    plt.xlabel('time step')
-    plt.ylabel('Steady-State Relative Differential Norm')
-    plt.savefig(f'{plot_dir}/steady_state_norms.png')
-    plt.show()
-
-    plt.figure(2)
-    plt.semilogy(time_steps, co2_norms, 'g.-')
-    plt.xlabel('time step')
-    plt.ylabel('CO$_2$ Residual Norm')
-    plt.savefig(f'{plot_dir}/co2_residual_norms.png')
+    ax0, ax1 = util.new_panel_plot(
+        1, 2,
+        xlabels = ['time step']*2,
+        ylabels = [
+            'Steady-State Relative Differential Norm',
+            'CO$_2$ Residual Norm',
+        ],
+        titles = [
+            'Steady-State norms',
+            'residual norms',
+        ]
+    )
+    ax0.semilogy(time_steps, steady_state_norms, 'g.-')
+    ax1.semilogy(time_steps, co2_norms, 'g.-')
+    plt.savefig(f'{plot_dir}/co2_residual_and_steady_state_norms.png')
     plt.show()
 
 
 def main():
     cfg = util.load_config()
     plot_dir = cfg['plot_dir']
+    os.makedirs(plot_dir, exist_ok=True)
 
     # Save output to file. Make sure to run
     # Crane with "--color off" to eliminate escape characters
@@ -58,6 +64,9 @@ def main():
     time_steps, co2_norms, steady_state_norms = get_norms(crane_output_file)
 
 
-    plot_norms(time_steps, co2_norms, steady_state_norms)
+    plot_norms(time_steps, co2_norms, steady_state_norms, plot_dir)
+
+
 if __name__ == '__main__':
-    main()
+    main(
+)
