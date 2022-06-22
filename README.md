@@ -11,26 +11,26 @@ Modify the Temperature parameterizations in `config.yaml`. `N` is the number
 of crane simulations that will be run.
 
 ## Setup Crane Simulations
-1. `$python build_bolsig_scripts.py` this will create one directory for
+1. `python build_bolsig_scripts.py` this will create one directory for
     every temperature in the simulation (configure in `config.yaml`)
 2. Set path to `bolsigminus` binary in `run_bolsigminus.sh`
-3. Run `$./run_bolsigminus.sh` This runs the Bolztmann solver to create rates
+3. Run `./run_bolsigminus.sh` This runs the Bolztmann solver to create rates
 for every electron impact reaction
-4. Run `$python parse_bolsig_output.py` This parses the single output file from the Boltzmann solver and places the rate coefficients for each electron impact reaction in side each temperature folder in `electron_impact_reactions` e.g. `300K/electron_impact_reactions/`
-5. Run `$python build_crane_input_files.py` This places a Crane input
+4. Run `python parse_bolsig_output.py` This parses the single output file from the Boltzmann solver and places the rate coefficients for each electron impact reaction in side each temperature folder in `electron_impact_reactions` e.g. `300K/electron_impact_reactions/`
+5. Run `python build_crane_input_files.py` This places a Crane input
 file in each temperature directory, configuring it with the appropriate
 initial CO2 density according to the temperature.
 
 ## Run Crane Simulations
 1. Set path to `crane-opt` executable in `run_crane_simulations.sh`
-2. Run `$./run_crane_simulations.sh` This runs crane for each temperature. Output is saved to each temperature directory in a file named `co2_splitting_out.csv`
+2. Run `./run_crane_simulations.sh` This runs crane for each temperature. Output is saved to each temperature directory in a file named `co2_splitting_out.csv`
 
 ## Post-processing
 To plot the rate of CO2 dissociation vs Gas Temp, run `python plot_co2_splitting_densities.py`
 
 To view residuals of a **single** crane simulation, run:
-1. Run `$<CRANE_OPT> --color off -i <TEMP_DIR>/co2_splitting.i &>crane_output.txt`, where `<CRANE_OPT>` is the path to the already-installed crane executable and `<TEMP_DIR>` is the directory created by the above process.
-2. Run `$python plot_residuals.py crane_output.txt`
+1. Run `<CRANE_OPT> --color off -i <TEMP_DIR>/co2_splitting.i &>crane_output.txt`, where `<CRANE_OPT>` is the path to the already-installed crane executable and `<TEMP_DIR>` is the directory created by the above process.
+2. Run `python plot_residuals.py crane_output.txt`
 
 
 
